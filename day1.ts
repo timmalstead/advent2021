@@ -1,12 +1,6 @@
-import { readFileSync } from "fs";
+import { add, parseInput } from "./utils";
 
-const add = (firstNum: number, secondNum: number): number =>
-  firstNum + secondNum;
-
-const input: number[] = readFileSync("./input/day1.txt")
-  .toString()
-  .split("\n")
-  .map((s: string): number => +s);
+const input: number[] = parseInput(__filename).map((s: string): number => +s);
 
 const largerDepthMeasurements = (depths: number[]): number => {
   let largerThanPrevious: number = 0;
