@@ -2,117 +2,116 @@ import { parseInput } from "./utils";
 
 const input: string[] = parseInput(__filename);
 
-const binDiagnostic = (arr: string[]): number => {
-  let [start, iter, zero, one]: number[] = [0, 0, 0, 0];
-  let [gamma, epsilon]: string[] = ["", ""];
+const binDiagnostic = (input: string[]): number => {
+  let [startPosition, j, zeroes, ones]: number[] = [0, 0, 0, 0];
+  let gamma: string = "";
+  const str: string = input.join("");
 
-  const str: string = arr.join("");
-  const len: number = str.length;
-
-  for (let i = start; iter <= len; i += arr[0].length, ++iter) {
+  for (let i = startPosition; j <= str.length; i += input[0].length, ++j) {
     let curBit: string = str[i];
 
     if (!curBit) {
-      gamma += zero > one ? "0" : "1";
+      gamma += zeroes > ones ? "0" : "1";
 
-      zero = 0;
-      one = 0;
-      i = ++start;
+      zeroes = 0;
+      ones = 0;
+      i = ++startPosition;
       curBit = str[i];
     }
 
-    if (curBit === "0") ++zero;
-    else if (curBit === "1") ++one;
+    if (curBit === "0") ++zeroes;
+    else ++ones;
   }
 
-  for (const char of gamma) epsilon += char === "0" ? "1" : "0";
+  const epsilon: string = gamma
+    .split("")
+    .map((s) => (s === "0" ? "1" : "0"))
+    .join("");
 
   return parseInt(gamma, 2) * parseInt(epsilon, 2);
 };
 
-const lifeSupportRating = (arr: string[]): number => {
-  let o2RateFilter: string[], co2RateFilter: string[];
-  let [startsWithZero, startsWithOne]: string[][] = [[], []];
-  let [curBin, curPos, o2Rate, co2rate]: number[] = [0, 0, 0, 0];
+const lifeSupportRating = (input: string[]): number => {
+  let [o2RateFilter, c02Filter, moreZeroes, moreOnes]: string[][] = [
+    [...input],
+    [...input],
+    [],
+    [],
+  ];
+  let [i, j]: number[] = [0, 0];
 
-  while (!co2rate) {
-    const curArr: string[] = co2RateFilter || arr;
-    let bin: string = curArr[curBin];
+  while (o2RateFilter.length > 1) {
+    let binStr: string = o2RateFilter[i];
 
-    if (!bin) {
-      const [zLen, oLen]: number[] = [
-        startsWithZero.length,
-        startsWithOne.length,
+    if (!binStr) {
+      const [moreZeroesLen, moreOnesLen]: number[] = [
+        moreZeroes.length,
+        moreOnes.length,
       ];
 
-      if (zLen === oLen)
-        co2RateFilter = curArr.filter(
-          (s: string): boolean => s[curPos] === "0"
+      if (moreZeroesLen === moreOnesLen)
+        o2RateFilter = o2RateFilter.filter(
+          (s: string): boolean => s[j] === "1"
         );
-      else if (zLen < oLen) co2RateFilter = startsWithZero;
-      else if (oLen < zLen) co2RateFilter = startsWithOne;
+      else if (moreZeroesLen > moreOnesLen) o2RateFilter = moreZeroes;
+      else if (moreOnesLen > moreZeroesLen) o2RateFilter = moreOnes;
 
-      if (co2RateFilter.length === 1) {
-        co2rate = parseInt(co2RateFilter[0], 2);
-        break;
-      } else {
-        startsWithZero = [];
-        startsWithOne = [];
-        curBin = 0;
-        bin = co2RateFilter[curBin];
-        ++curPos;
+      if (o2RateFilter.length === 1) continue;
+      else {
+        moreZeroes = [];
+        moreOnes = [];
+        i = 0;
+        binStr = o2RateFilter[i];
+        ++j;
       }
     }
 
-    const bit: string = bin[curPos];
+    const bit: string = binStr[j];
 
-    if (bit === "0") startsWithZero.push(bin);
-    else if (bit === "1") startsWithOne.push(bin);
+    if (bit === "0") moreZeroes.push(binStr);
+    else if (bit === "1") moreOnes.push(binStr);
 
-    ++curBin;
+    ++i;
   }
 
-  startsWithOne = [];
-  startsWithZero = [];
-  curBin = 0;
-  curPos = 0;
+  i = 0;
+  j = 0;
+  moreZeroes = [];
+  moreOnes = [];
 
-  while (!o2Rate) {
-    const curArr: string[] = o2RateFilter || arr;
-    let bin: string = curArr[curBin];
+  while (c02Filter.length > 1) {
+    let binStr: string = c02Filter[i];
 
-    if (!bin) {
-      const [zLen, oLen]: number[] = [
-        startsWithZero.length,
-        startsWithOne.length,
+    if (!binStr) {
+      const [moreZeroesLen, moreOnesLen]: number[] = [
+        moreZeroes.length,
+        moreOnes.length,
       ];
 
-      if (zLen === oLen)
-        o2RateFilter = curArr.filter((s: string): boolean => s[curPos] === "1");
-      else if (zLen > oLen) o2RateFilter = startsWithZero;
-      else if (oLen > zLen) o2RateFilter = startsWithOne;
+      if (moreZeroesLen === moreOnesLen)
+        c02Filter = c02Filter.filter((s: string): boolean => s[j] === "0");
+      else if (moreZeroesLen < moreOnesLen) c02Filter = moreZeroes;
+      else if (moreOnesLen < moreZeroesLen) c02Filter = moreOnes;
 
-      if (o2RateFilter.length === 1) {
-        o2Rate = parseInt(o2RateFilter[0], 2);
-        break;
-      } else {
-        startsWithZero = [];
-        startsWithOne = [];
-        curBin = 0;
-        bin = o2RateFilter[curBin];
-        ++curPos;
+      if (c02Filter.length === 1) continue;
+      else {
+        moreZeroes = [];
+        moreOnes = [];
+        i = 0;
+        binStr = c02Filter[i];
+        ++j;
       }
     }
 
-    const bit: string = bin[curPos];
+    const bit: string = binStr[j];
 
-    if (bit === "0") startsWithZero.push(bin);
-    else if (bit === "1") startsWithOne.push(bin);
+    if (bit === "0") moreZeroes.push(binStr);
+    else if (bit === "1") moreOnes.push(binStr);
 
-    ++curBin;
+    ++i;
   }
 
-  return o2Rate * co2rate;
+  return parseInt(o2RateFilter[0], 2) * parseInt(c02Filter[0], 2);
 };
 
 console.log(binDiagnostic(input), lifeSupportRating(input));
