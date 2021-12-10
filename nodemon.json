@@ -1,5 +1,5 @@
 {
   "watch": ["."],
   "ext": "ts",
-  "exec": "npx ts-node day9.ts"
+  "exec": "npx ts-node day10.ts"
 }
