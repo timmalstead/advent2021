@@ -1,5 +1,5 @@
 {
   "watch": ["."],
   "ext": "ts",
-  "exec": "npx ts-node 2020_day12.ts"
+  "exec": "npx ts-node day21.ts"
 }
